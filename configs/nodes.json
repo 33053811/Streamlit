@@ -1,0 +1,17 @@
+
+{
+  "节点一 🇺🇸": {
+    "type": "vless",
+    "address": "jd1.ppwq.us.kg",
+    "port": 443,
+    "uuid": "abcd-1234",
+    "encryption": "none",
+    "tls": "reality"
+  },
+  "节点二 🇯🇵": {
+    "type": "hysteria2",
+    "server": "jd2.ppwq.us.kg:8443",
+    "auth": "mypassword",
+    "obfs": "salamander"
+  }
+}
