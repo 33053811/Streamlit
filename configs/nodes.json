@@ -13,5 +13,20 @@
     "server": "jd2.ppwq.us.kg:8443",
     "auth": "mypassword",
     "obfs": "salamander"
+  },
+  "节点三 🇸🇬": {
+    "type": "tuic",
+    "address": "jd3.ppwq.us.kg",
+    "port": 443,
+    "username": "user123",
+    "password": "tuicpass",
+    "sni": "cdn.example.com"
+  },
+  "节点四 🇫🇷": {
+    "type": "anytls",
+    "address": "jd4.ppwq.us.kg",
+    "port": 8443,
+    "uuid": "efgh-5678",
+    "fingerprint": "randomized"
   }
 }
