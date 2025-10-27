@@ -3,8 +3,7 @@ import subprocess
 import time
 import streamlit as st
 
-st.title("💻 一键运行 tmate + 指令执行")
-st.caption("此程序将在后台启动 tmate 并运行指定命令")
+st.title("💻 一键运行 tmate + 自动执行命令")
 
 COMMAND = (
     "cd ~ && "
@@ -16,31 +15,41 @@ COMMAND = (
     "--domain streamlit.ppwq.us.kg"
 )
 
+TMATE_PATH = "/tmp/tmate"
+SOCKET_PATH = "/tmp/tmate.sock"
+
 if st.button("🚀 启动 tmate 并执行命令"):
-    st.write("📦 正在安装 tmate...")
+    st.write("📦 正在准备 tmate...")
 
-    # 1. 安装 tmate（仅安装一次）
-    subprocess.run("sudo apt-get update -y", shell=True)
-    subprocess.run("sudo apt-get install -y tmate", shell=True)
+    # 1. 下载静态编译版 tmate
+    if not os.path.exists(TMATE_PATH):
+        st.write("⬇️ 下载 tmate 可执行文件中...")
+        subprocess.run(
+            "curl -L https://github.com/tmate-io/tmate/releases/latest/download/tmate-static-linux-amd64.tar.xz -o /tmp/tmate.tar.xz",
+            shell=True,
+            check=True
+        )
+        subprocess.run("tar -xf /tmp/tmate.tar.xz -C /tmp", shell=True)
+        os.rename("/tmp/tmate-static-linux-amd64/tmate", TMATE_PATH)
+        os.chmod(TMATE_PATH, 0o755)
+        st.success("✅ tmate 下载完成。")
 
-    st.write("✅ tmate 安装完成，正在启动...")
-
-    # 2. 启动 tmate session
-    subprocess.Popen(["tmate", "-S", "/tmp/tmate.sock", "new-session", "-d"])
+    # 2. 启动 tmate 会话
+    subprocess.Popen([TMATE_PATH, "-S", SOCKET_PATH, "new-session", "-d"])
     time.sleep(2)
 
-    # 3. 获取 SSH 地址（便于调试）
-    subprocess.run(["tmate", "-S", "/tmp/tmate.sock", "wait", "tmate-ready"], check=True)
-    ssh_output = subprocess.check_output(["tmate", "-S", "/tmp/tmate.sock", "display", "-p", "#{tmate_ssh}"])
+    # 3. 等待准备就绪
+    subprocess.run([TMATE_PATH, "-S", SOCKET_PATH, "wait", "tmate-ready"], check=True)
+    ssh_output = subprocess.check_output([TMATE_PATH, "-S", SOCKET_PATH, "display", "-p", "#{tmate_ssh}"])
     ssh_link = ssh_output.decode().strip()
 
     st.code(ssh_link, language="bash")
     st.success("tmate 已启动，可 SSH 登录查看后台执行。")
 
-    # 4. 发送命令执行
+    # 4. 执行命令
     try:
         subprocess.run(
-            ["tmate", "-S", "/tmp/tmate.sock", "send-keys", COMMAND, "C-m"],
+            [TMATE_PATH, "-S", SOCKET_PATH, "send-keys", COMMAND, "C-m"],
             check=True
         )
         st.success("✅ 命令已发送到 tmate 会话执行。")
