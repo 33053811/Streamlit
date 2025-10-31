@@ -1,0 +1,40 @@
+name: Random-wait and visit Streamlit app
+
+on:
+  workflow_dispatch:   # 可手动触发
+  schedule:
+    - cron: '0 */3 * * *'  # 每 3 小时执行一次，可改
+
+jobs:
+  visit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm i playwright --save-dev
+          npx playwright install chromium
+
+      - name: Random sleep 0–30 minutes
+        run: |
+          RAND=$((RANDOM % 1801))
+          echo "Sleeping for $RAND seconds (~$((RAND/60)) minutes)"
+          sleep $RAND
+
+      - name: Run login script
+        env:
+          GH_LOGIN: ${{ secrets.GH_LOGIN }}
+          GH_PASS:  ${{ secrets.GH_PASS }}
+          TARGET_URL: https://nacvnejvddvitifldre34r.streamlit.app/
+        run: |
+          node scripts/login_and_visit.js
