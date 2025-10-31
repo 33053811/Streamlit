@@ -1,14 +1,14 @@
 /**
  * Puppeteer 自动登录 GitHub + 访问 Streamlit
- * 可部署在 GitHub Actions
+ * 适用于 GitHub Actions
  */
 
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
 
-const GITHUB_USER = process.env.GITHUB_USER;      // 改为新的 Secret 名称
-const GITHUB_PASS = process.env.GITHUB_PASS;      // 改为新的 Secret 名称
+const GITHUB_USER = process.env.GITHUB_USER;      // GitHub 用户名
+const GITHUB_PASS = process.env.GITHUB_PASS;      // GitHub Personal Access Token (PAT)
 const TARGET_URL = 'https://nacvnejvddvitifldre34r.streamlit.app/';
 const COOKIE_FILE = path.resolve(__dirname, 'cookies.json');
 
@@ -18,10 +18,12 @@ function getRandomDelayMs() {
     return minutes * 60 * 1000;
 }
 
+// 异步睡眠
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// 加载 cookie 文件
 async function loadCookies(page) {
     if (fs.existsSync(COOKIE_FILE)) {
         const cookiesString = fs.readFileSync(COOKIE_FILE);
@@ -31,12 +33,14 @@ async function loadCookies(page) {
     }
 }
 
+// 保存 cookie 文件
 async function saveCookies(page) {
     const cookies = await page.cookies();
     fs.writeFileSync(COOKIE_FILE, JSON.stringify(cookies, null, 2));
     console.log('Saved cookies to file');
 }
 
+// 登录 GitHub（使用 PAT）
 async function loginGitHub(page) {
     console.log('Logging in to GitHub...');
     await page.goto('https://github.com/login', { waitUntil: 'networkidle2' });
@@ -48,17 +52,19 @@ async function loginGitHub(page) {
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
 
     if (page.url().includes('github.com/session')) {
-        throw new Error('GitHub login failed, check credentials or 2FA');
+        throw new Error('GitHub login failed, check credentials or PAT');
     }
 
     console.log('GitHub login successful');
 }
 
+// 访问目标 Streamlit 页面
 async function visitTarget(page) {
     await page.goto(TARGET_URL, { waitUntil: 'networkidle2' });
     console.log(`Visited ${TARGET_URL} at ${new Date().toISOString()}`);
 }
 
+// 主流程
 async function main() {
     const browser = await puppeteer.launch({
         headless: true,
@@ -66,6 +72,7 @@ async function main() {
     });
     const page = await browser.newPage();
 
+    // 尝试加载已有 cookie
     await loadCookies(page);
 
     try {
@@ -78,6 +85,7 @@ async function main() {
         await visitTarget(page);
     }
 
+    // 随机延时 1~30 分钟访问一次
     const delay = getRandomDelayMs();
     console.log(`Next visit in ${(delay / 60000).toFixed(1)} minutes`);
     await sleep(delay);
@@ -94,6 +102,7 @@ async function main() {
     await browser.close();
 }
 
+// 启动
 main().catch(err => {
     console.error('Script crashed:', err);
     process.exit(1);
