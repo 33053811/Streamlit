@@ -1,0 +1,28 @@
+name: Auto Visit Streamlit
+
+on:
+  schedule:
+    # 每天 24 小时触发一次，随机延时在脚本内处理
+    - cron: "0 0 * * *"
+  workflow_dispatch:  # 可以手动触发
+
+jobs:
+  auto-visit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Puppeteer auto visit
+        env:
+          GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
+          GITHUB_PASSWORD: ${{ secrets.GITHUB_PASSWORD }}
+        run: node auto_visit.js
