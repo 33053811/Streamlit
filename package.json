@@ -1,0 +1,8 @@
+{
+  "name": "auto-visit",
+  "version": "1.0.0",
+  "main": "auto_visit.js",
+  "dependencies": {
+    "puppeteer": "^21.3.8"
+  }
+}
