@@ -7,8 +7,8 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
 
-const GITHUB_USERNAME = process.env.GITHUB_USERNAME;
-const GITHUB_PASSWORD = process.env.GITHUB_PASSWORD;
+const GITHUB_USER = process.env.GITHUB_USER;      // 改为新的 Secret 名称
+const GITHUB_PASS = process.env.GITHUB_PASS;      // 改为新的 Secret 名称
 const TARGET_URL = 'https://nacvnejvddvitifldre34r.streamlit.app/';
 const COOKIE_FILE = path.resolve(__dirname, 'cookies.json');
 
@@ -41,8 +41,8 @@ async function loginGitHub(page) {
     console.log('Logging in to GitHub...');
     await page.goto('https://github.com/login', { waitUntil: 'networkidle2' });
 
-    await page.type('#login_field', GITHUB_USERNAME, { delay: 50 });
-    await page.type('#password', GITHUB_PASSWORD, { delay: 50 });
+    await page.type('#login_field', GITHUB_USER, { delay: 50 });
+    await page.type('#password', GITHUB_PASS, { delay: 50 });
     await page.click('input[name="commit"]');
 
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
@@ -78,7 +78,6 @@ async function main() {
         await visitTarget(page);
     }
 
-    // 随机循环访问
     const delay = getRandomDelayMs();
     console.log(`Next visit in ${(delay / 60000).toFixed(1)} minutes`);
     await sleep(delay);
