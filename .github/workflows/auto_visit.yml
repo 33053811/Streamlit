@@ -4,7 +4,7 @@ on:
   schedule:
     # 每天 24 小时触发一次，随机延时在脚本内处理
     - cron: "0 0 * * *"
-  workflow_dispatch:  # 可以手动触发
+  workflow_dispatch:  # 可手动触发
 
 jobs:
   auto-visit:
@@ -23,6 +23,6 @@ jobs:
 
       - name: Run Puppeteer auto visit
         env:
-          GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
-          GITHUB_PASSWORD: ${{ secrets.GITHUB_PASSWORD }}
+          GITHUB_USER: ${{ secrets.MY_GITHUB_USER }}
+          GITHUB_PASS: ${{ secrets.MY_GITHUB_PASS }}
         run: node auto_visit.js
