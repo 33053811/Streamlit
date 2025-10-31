@@ -2,24 +2,26 @@ name: Auto Visit Streamlit
 
 on:
   schedule:
-    # 每3小时触发一次，脚本内部随机延时 1~30 分钟
-    - cron: "0 */3 * * *"
-  workflow_dispatch:  # 可手动触发
+    # 每天运行一次（UTC 时间 00:00）
+    - cron: "0 0 * * *"
+  workflow_dispatch: # 可手动执行
 
 jobs:
   auto-visit:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm cache clean --force
+          npm install puppeteer@^24.15.0
 
       - name: Run Puppeteer auto visit
         env:
