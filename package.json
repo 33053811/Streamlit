@@ -1,8 +1,12 @@
 {
   "name": "auto-visit",
   "version": "1.0.0",
+  "description": "Puppeteer 自动登录 GitHub + 访问 Streamlit",
   "main": "auto_visit.js",
+  "scripts": {
+    "start": "node auto_visit.js"
+  },
   "dependencies": {
-    "puppeteer": "^21.3.8"
+    "puppeteer": "^25.0.0"
   }
 }
