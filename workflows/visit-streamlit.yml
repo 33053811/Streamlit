@@ -1,0 +1,44 @@
+name: Random-wait and visit Streamlit app
+
+on:
+  workflow_dispatch:   # 手动触发，也可以改成 schedule
+  schedule:
+    - cron: '*/30 * * * *'  # 可选：每 30 分钟触发一次（按需修改或删除）
+
+jobs:
+  visit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd scripts || mkdir scripts && cd scripts
+          npm init -y
+          npm i playwright @playwright/test --save-dev
+          # 安装 chromium 浏览器（Playwright 会提示并自动下载）
+          npx playwright install chromium
+
+      - name: Random sleep 0-30 minutes
+        shell: bash
+        run: |
+          # 生成 0..1800 的随机秒数并 sleep
+          RAND=$((RANDOM % 1801))
+          echo "Sleeping for ${RAND} seconds (≈ $((RAND/60))m $((RAND%60))s)"
+          sleep "${RAND}"
+
+      - name: Run login-and-visit script
+        env:
+          GH_LOGIN: ${{ secrets.GH_LOGIN }}
+          GH_PASS:  ${{ secrets.GH_PASS }}
+          TARGET_URL: https://nacvnejvddvitifldre34r.streamlit.app/
+          SAVE_SCREENSHOT: true    # 可设置为 false
+        run: |
+          node scripts/login_and_visit.js
