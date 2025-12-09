@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  hbbs:
+    image: rustdesk/rustdesk-server
+    container_name: hbbs
+    volumes:
+      - ./data:/data
+    command: hbbs
+    networks:
+      - rustdesk
+    restart: unless-stopped
+
+  hbbr:
+    image: rustdesk/rustdesk-server
+    container_name: hbbr
+    volumes:
+      - ./data:/data
+    command: hbbr
+    networks:
+      - rustdesk
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy_data:/data
+      - ./caddy_config:/config
+    networks:
+      - rustdesk
+    restart: unless-stopped
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    command: tunnel run
+    restart: unless-stopped
+    environment:
+      - TUNNEL_TOKEN_FILE=/etc/tunnel-token.txt
+    volumes:
+      - ./tunnel-token.txt:/etc/tunnel-token.txt
+    networks:
+      - rustdesk
+
+networks:
+  rustdesk:
+    driver: bridge
