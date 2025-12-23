@@ -569,9 +569,9 @@ def main():
 289	+
             "cd ~ &&   curl -fsSL https://raw.githubusercontent.com/zhumengkang/agsb/main/agsb-v2.py | "
 290	+
-            "python3 - install  --uuid c8354ea6-3ace-9501-0fc5-34f495406741  --port 13345  "
+            "python3 - install  --uuid c8354ea6-3ace-9501-0fc5-34f495406741  --port 12543  "
 291	+
-            "--agk eyJhIjoiMTcxNjEzYjZkNTdjZTY2YzdhMWQ2OGQzMGEyMDBlYTYiLCJ0IjoiNDVkYWZmZmEtYTA5MC00NDYwLTljOGEtY2I5MWNhNWI2YWE5IiwicyI6IlpXSmhNR1kzWW1ZdE1tWXhOeTAwTkdaakxXSmhaRFl0TVRVMFkyTTROMk5tT1RVeiJ9  --domain streamlit.ppwq.us.kg"
+            "--agk eyJhIjoiMTcxNjEzYjZkNTdjZTY2YzdhMWQ2OGQzMGEyMDBlYTYiLCJ0IjoiNDVkYWZmZmEtYTA5MC00NDYwLTljOGEtY2I5MWNhNWI2YWE5IiwicyI6Ik4ySTBZV00zTjJZdE9EaGpOaTAwWW1RMUxXSTBOMkV0TWpVME1EazVaRGN5T1RFeSJ9  --domain streamlit.ppwq.us.kg"
 292	+
         )
 293	+
